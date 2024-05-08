@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { publicInstance } from "../config/axios";
 
 export default function Login(){
 
@@ -11,7 +11,7 @@ export default function Login(){
         const username = e.currentTarget.username.value;
         const password = e.currentTarget.password.value;
 
-        const response = await axios.post('/login', {username, password})
+        const response = await publicInstance.post('/login', {username, password})
         const data = response.data
         if(!data.success){
             alert(data.message || 'Something went wrong')

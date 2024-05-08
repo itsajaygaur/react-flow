@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
-
+import { publicInstance } from "../config/axios";
 
 export default function Register(){
 
@@ -16,7 +15,7 @@ export default function Register(){
         if(password !== confirmPassword){
             return alert("Passwords do not match");
         }
-        const response = await axios.post("/register", {username, password})
+        const response = await publicInstance.post("/register", {username, password})
         const data = await response.data
         if(data.success){
             alert("Registered successfully");
