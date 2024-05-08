@@ -1,3 +1,4 @@
+import Edge from '@/models/Edge';
 import Node from '@/models/Node'
 import mongoose from 'mongoose';
 
@@ -109,6 +110,10 @@ export async function deleteNode(req, res){
         const result = await Node.findByIdAndDelete(id)
 
         if(!result) return res.status(402).json({success: false, message: 'Failed to delete the node'})
+
+        const deleteEdge = await Edge.deleteMany({$or: [{source: result.id}, {target: result.id}] })
+
+        if(!deleteEdge) res.status(402).json({success: false, message: 'Failed to delete its edges'})
 
         res.status(200).json({success: true})
         

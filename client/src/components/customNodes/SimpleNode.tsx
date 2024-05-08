@@ -2,7 +2,7 @@ import { NodeType } from "../../types/NodeType"
 import { Handle, Position } from "reactflow";
 import { MdDeleteOutline } from "react-icons/md";
 import { useReactFlow } from "reactflow";
-import deleteNode from "../../lib/deleteNode";
+import deleteNode from "../../lib/api";
 
 export default function SimpleNode(data: NodeType){
 

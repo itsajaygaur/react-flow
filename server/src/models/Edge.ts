@@ -10,7 +10,7 @@ interface IEdge extends DocumentResult<IEdge> {
   target: { label: string };
 }
 
-const nodeSchema: Schema<IEdge> = new Schema({
+const edgeSchema: Schema<IEdge> = new Schema({
   id: { type: String },
   source: {
     type: String,
@@ -20,6 +20,6 @@ const nodeSchema: Schema<IEdge> = new Schema({
   },
 });
 
-const Edge: Model<IEdge> = mongoose.model<IEdge>("Edge", nodeSchema);
+const Edge: Model<IEdge> = mongoose.model<IEdge>("Edge", edgeSchema);
 
 export default Edge;
