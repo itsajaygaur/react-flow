@@ -35,7 +35,7 @@ export default function Register(){
                 <input name="username" className="input input-bordered w-full" type="text" placeholder="Username" required={true} />
                 <input name="password" className="input input-bordered w-full" type="password" placeholder="Password" required={true} />
                 <input name="confirmPassword" className="input input-bordered w-full" type="password" placeholder="Confirm Password" required={true} />
-                <button className="btn btn-primary w-full" >Login </button>
+                <button className="btn btn-primary w-full" >Register</button>
 
                 <p>Already have an account ? <Link className="text-blue-500 hover:underline" to="/login" >Login</Link> </p>
             </form>

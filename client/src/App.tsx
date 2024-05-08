@@ -3,8 +3,8 @@ import './App.css'
 import ReactFlowPage from './pages/ReactFlow'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import PrivateRoutes from './hoc/PrivateRoutes'
-import AuthRoutes from './hoc/AuthRoutes'
+import PrivateRoutes from './components/PrivateRoutes'
+import AuthRoutes from './components/AuthRoutes'
 
 export default function App(){
 

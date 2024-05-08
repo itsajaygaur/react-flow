@@ -12,6 +12,7 @@ A web application built with MERN stack allows users to design and implement ema
 - CRUD operations for managing data using MongoDB
 - User authentication and authorization
 - Integration with the React Flow library for visualizing data flow
+- Drag and drop synced with database
 
 ## Installation
 
