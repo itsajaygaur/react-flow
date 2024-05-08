@@ -11,7 +11,7 @@ export default function SimpleNode(data: NodeType){
     async function handleDelete(){
 
         const result = await deleteNode(data.id)
-        if(!result) return console.log('Something went wrong!')
+        if(!result) return alert('Something went wrong!')
         setNodes(prev => prev.filter(node => node.id !== data.id))
 
     }
@@ -23,10 +23,10 @@ export default function SimpleNode(data: NodeType){
                 <MdDeleteOutline className="fill-red-500" />
             </button>
 
-           <div className="flex items-center gap-3 "  >
-                <p className="text-sm" >{data.data.label}</p>
+           {/* <div className="flex items-center gap-3 "  > */}
+                <p className="text-sm mb-2" >{data.data.label}</p>
                 {data.data.description && <p className="text-xs" >{data.data.description}</p>}
-            </div>
+            {/* </div> */}
             
             <Handle type="target" id="a" position={Position.Top} />
             <Handle type="source" position={Position.Bottom} />

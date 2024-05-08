@@ -1,124 +1,112 @@
-import Edge from '@/models/Edge';
-import Node from '@/models/Node'
-import mongoose from 'mongoose';
-
+import Edge from "@/models/Edge";
+import Node from "@/models/Node";
 
 //Add node
-export async function addNode(req, res){
-    try {
-        const data = req.body
+export async function addNode(req, res) {
+  try {
+    const data = req.body;
+    const {id} = req.user
 
-        console.log('add ', data)
-        if(!data) return res.status(400).json({success: false, message: 'Provide nodes to udpate'})
-        
-        const result = await Node.create(data)
+    data.user = id
 
-        // console.log('restult -> ' , result)
+    if (!data)
+      return res
+        .status(400)
+        .json({ success: false, message: "Provide nodes to udpate" });
 
+    const result = await Node.create(data);
 
-            const { __v, _id, ...rest } = result._doc; // Destructure __v and _id, keep the rest of the properties
-            const modifiedNode = { id: _id, ...rest}; // Rename _id to id and keep other properties
-  
+    // console.log('restult -> ' , result)
 
-        return res.status(200).json({success: true, data: modifiedNode })
+    const { __v, _id, ...rest } = result._doc; // Destructure __v and _id, keep the rest of the properties
+    const modifiedNode = { id: _id, ...rest }; // Rename _id to id and keep other properties
 
-
-    } catch (error) {
-        console.log(error)
-    }
+    return res.status(200).json({ success: true, data: modifiedNode });
+  } catch (error) {
+    console.log(error);
+  }
 }
-
-
 
 //Update node
-export async function updateNode(req, res){
-    try {
-        const data = req.body;
-        // console.log('data  ---> ', data)
-        if(!data || !data.length) return res.status(400).json({success: false, message: 'Provide nodes to udpate'})
-        //     const dataToUpdate = data.map(item => {
-        //         const {id, type, position, data} = item
-        //         return {id, type, position, data}
-        // })
+export async function updateNode(req, res) {
+  try {
+    const data = req.body;
 
-        const updatePromises = data.map(async item => {
-            await Node.findByIdAndUpdate({_id: item.id}, item )
-        })
+    if (!data || !data.length)
+      return res
+        .status(400)
+        .json({ success: false, message: "Provide nodes to udpate" });
 
-        await Promise.all(updatePromises);
+    const updatePromises = data.map(async (item) => {
+      await Node.findByIdAndUpdate({ _id: item.id }, item);
+    });
 
-            // const bulkOps: any[] = [];
-            // dataToUpdate.forEach(node => {
-            //     bulkOps.push({
-            //       updateOne: {
-            //         filter: { _id: new mongoose.Types.ObjectId(node.id as string) }, // Match documents based on id
-            //         update: { $set: node }, // Update with the entire node object
-            //         upsert: true, // Upsert for each operation
-            //       },
-            //     });
-            //   });
-            //   const result = await Node.collection.bulkWrite?.(bulkOps)
+    await Promise.all(updatePromises);
 
-            // if(!result) return res.status(401).json({success: false, message: 'Failed to add data!'})
-
-        // const modifiedNodes = result.length && result.map(node => {
-        //     const { __v, _id, ...rest } = node._doc; // Destructure __v and _id, keep the rest of the properties
-        //     return { id: _id.toString(), ...rest }; // Rename _id to id and keep other properties
-        //     });
-
-
-            return res.json({success: true})
-        
-
-
-
-    } catch (error) {
-        console.log('something went wrong', error)
-        return res.status(500).json({error: 'Internal server error'});
-    }
+    return res.json({ success: true });
+  } catch (error) {
+    console.log("something went wrong", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
-
 
 //Get all nodes
-export async function getNodes(req, res){
+export async function getNodes(req, res) {
     try {
-        const data = await Node.find()
-        if(!data) return res.status(400).json({success: false, message: 'Failed to get data'})
-
-    const modifiedNodes = data.map(node => {
-        const { __v, _id, ...rest } = node._doc; // Destructure __v and _id, keep the rest of the properties
-        return { id: _id.toString(), ...rest}; // Rename _id to id and keep other properties
-        });
+      const {id} = req.user
 
 
-        return res.status(200).json({success: true, data: modifiedNodes })
-    } catch (error) {
-        console.log('something went wrong', error)
-        return res.status(500).json({error: 'Internal server error'});
-    }
+
+    const data = await Node.find({user: id})
+    if (!data)
+        return res
+    .status(400)
+    .json({ success: false, message: "Failed to get data" });
+    
+
+
+    const modifiedNodes = data.map((node) => {
+      const { __v, _id, ...rest } = node._doc; // Destructure __v and _id, keep the rest of the properties
+      return { id: _id.toString(), ...rest }; // Rename _id to id and keep other properties
+    });
+
+    return res.status(200).json({ success: true, data: modifiedNodes });
+  } catch (error) {
+    console.log("something went wrong", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
-
 //Delete a node
-export async function deleteNode(req, res){
-    try {
-        const {id} = req.params
-        // console.log('id ', id)
+export async function deleteNode(req, res) {
+  try {
+    const { id } = req.params;
+    // console.log('id ', id)
 
-        if(!id) return res.status(400).json({success: false, message: "Missing node id!"})
+    if (!id)
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing node id!" });
 
-        const result = await Node.findByIdAndDelete(id)
+    const result = await Node.findByIdAndDelete(id);
 
-        if(!result) return res.status(402).json({success: false, message: 'Failed to delete the node'})
+    if (!result)
+      return res
+        .status(402)
+        .json({ success: false, message: "Failed to delete the node" });
 
-        const deleteEdge = await Edge.deleteMany({$or: [{source: result.id}, {target: result.id}] })
+    const deleteEdge = await Edge.deleteMany({
+      $or: [{ source: result.id }, { target: result.id }],
+    });
 
-        if(!deleteEdge) res.status(402).json({success: false, message: 'Failed to delete its edges'})
+    if (!deleteEdge)
+      res
+        .status(402)
+        .json({ success: false, message: "Failed to delete its edges" });
 
-        res.status(200).json({success: true})
-        
-    } catch (error) {
-        console.log('something went wrong', error)
-        return res.status(500).json({error: 'Internal server error'});
-    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log("something went wrong", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }

@@ -4,6 +4,8 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   Connection,
+  Background,
+  Controls,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { FiPlus } from "react-icons/fi";
@@ -15,13 +17,8 @@ import { debounce } from "./../lib/utils";
 import { useRef } from "react";
 import { getEdges, getNodes, updateEdge, updateNode } from "../lib/api";
 import { authInstance } from "../config/axios";
-// const initialNodes: Node[] = [
-//   { id: '1', type: 'email', position: { x: 0, y: 0 }, data: { label: 'email' } },
-//   { id: '2', type: 'simple', position: { x: 0, y: 100 }, data: { label: 'Sequence start point' } },
-//   // { id: '3', type: 'lead', position: { x: 0, y: 180 }, data: { label: 'add people' } },
-//   // { id: '4', type: 'delay', position: { x: 0, y: 280 }, data: { label: 'Wait' } },
-// ];
-// const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+import LogoutBtn from "../components/LogoutBtn";
+
 
 const nodeTypes: any = {
   email: EmailNode,
@@ -32,8 +29,7 @@ const nodeTypes: any = {
 
 export default function ReactFlowPage() {
 
-    
-
+  
 
   const formRef = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -44,6 +40,8 @@ export default function ReactFlowPage() {
     [setEdges]
   );
 
+
+  //Add node to database
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -73,13 +71,9 @@ export default function ReactFlowPage() {
         dataToUpdate.data.description = description.trim();
       }
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Token doesn not exist");
-      }
+
       const res = await authInstance.post("/add-node", dataToUpdate);
-    //   const data = await res.json();
-      console.log("data -> ", res.data);
+      // console.log("data -> ", res.data);
       const data = res.data
       if (!data.success) {
         alert(data.message || "something went wrong");
@@ -108,7 +102,7 @@ export default function ReactFlowPage() {
     if (!result) {
       alert("something went wrong");
     }
-    console.log("result", result);
+    // console.log("result", result);
     setEdges(result.data);
   }
 
@@ -118,10 +112,12 @@ export default function ReactFlowPage() {
     if (!result) {
       alert("something went wrong");
     }
-    console.log("result", result);
+    // console.log("result", result);
     setNodes(result.data);
   }
 
+
+  //Debouncing api calls on change of edges or nodes to avoid large number of network calls
   const updateNodeDebounce = debounce(updateNode, 300);
   const updateEdgeDebounce = debounce(updateEdge, 300);
 
@@ -151,6 +147,10 @@ export default function ReactFlowPage() {
         nodeTypes={nodeTypes}
         // fitView
       >
+        <Background />
+        <Controls />
+        <LogoutBtn />
+
         <div
           onClick={() =>
             (

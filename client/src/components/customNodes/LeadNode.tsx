@@ -14,7 +14,7 @@ export default function LeadNode(data: NodeType){
     async function handleDelete(){
 
         const result = await deleteNode(data.id)
-        if(!result) return console.log('Something went wrong!')
+        if(!result) return alert('Something went wrong!')
         setNodes(prev => prev.filter(node => node.id !== data.id))
 
     }
@@ -34,7 +34,7 @@ export default function LeadNode(data: NodeType){
            </div>
             </div>
 
-             <Handle type="target" position={Position.Top} />
+             {/* <Handle type="target" position={Position.Top} /> */}
              <Handle type="source" position={Position.Bottom} />
         </div>
     )

@@ -44,11 +44,12 @@ export async function login(req, res){
             
         if(!isValidPassword) return res.status(202).json({success: false, message: 'Incorrect password!'})
         
-        const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: '24h'})
+        const token = jwt.sign({id: user.id, username: user.username}, process.env.JWT_SECRET, {expiresIn: '24h'})
 
         return res.status(200).json({success: true, token})
         
     } catch (error) {
+        console.log(error)
         res.status(500).json({success: false, message: 'Internal server error'})
     }
 }

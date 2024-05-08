@@ -5,14 +5,17 @@ interface DocumentResult<T> {
 }
 
 interface INode extends DocumentResult<INode> {
+  user: string;
   type: string;
   position: { x: number; y: number };
   data: { label: string };
 }
 
 const nodeSchema: Schema<INode> = new Schema({
+  user: {type: String, required: true},
   type: {
     type: String,
+    required: true,
   },
   position: {
     x: { type: Number, required: true },

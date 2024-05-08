@@ -12,7 +12,7 @@ export default function EmailNode(data: NodeType){
     async function handleDelete(){
 
         const result = await deleteNode(data.id)
-        if(!result) return console.log('Something went wrong!')
+        if(!result) return alert('Something went wrong!')
         setNodes(prev => prev.filter(node => node.id !== data.id))
 
     }
@@ -33,7 +33,7 @@ export default function EmailNode(data: NodeType){
                 {data.data.description && <p className="text-xs text-violet-700" >{data.data.description}</p>}
            </div>
             </div>
-            {/* <Handle type="target" id="a" position={Position.Top} /> */}
+            <Handle type="target" position={Position.Top} />
             <Handle type="source" position={Position.Bottom} />
         </div>
     )

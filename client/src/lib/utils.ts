@@ -22,3 +22,8 @@ export function debounce(func: Function, delay: number): { invoke: Function; can
 
     return { invoke, cancel };
 }
+
+export function logout(){
+    localStorage.clear()
+    window.location.href = "/login"
+}

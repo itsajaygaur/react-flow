@@ -12,7 +12,7 @@ export default function DelayNode(data: NodeType){
     async function handleDelete(){
 
         const result = await deleteNode(data.id)
-        if(!result) return console.log('Something went wrong!')
+        if(!result) return alert('Something went wrong!')
         setNodes(prev => prev.filter(node => node.id !== data.id))
 
     }
