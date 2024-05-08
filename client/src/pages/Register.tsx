@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 
 export default function Register(){
 
@@ -14,17 +16,8 @@ export default function Register(){
         if(password !== confirmPassword){
             return alert("Passwords do not match");
         }
-        const response = await fetch("http://localhost:8000/api/v1/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        })
-        const data = await response.json();
+        const response = await axios.post("/register", {username, password})
+        const data = await response.data
         if(data.success){
             alert("Registered successfully");
             window.location.href = "/login";

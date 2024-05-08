@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Login(){
 
@@ -10,17 +11,8 @@ export default function Login(){
         const username = e.currentTarget.username.value;
         const password = e.currentTarget.password.value;
 
-        const response = await fetch('http://localhost:8000/api/v1/login', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        })
-        const data = await response.json()
+        const response = await axios.post('/login', {username, password})
+        const data = response.data
         if(!data.success){
             alert(data.message || 'Something went wrong')
             return
