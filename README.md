@@ -29,6 +29,7 @@ A web application built with MERN stack allows users to design and implement ema
 ## Usage
 
 1. Start the development server using the instructions above.
-2. Open your browser and navigate to `http://localhost:3000` (or the specified port).
-3. Use the web application to perform CRUD operations, visualize data flow, and authenticate users.
+2. Open your browser and navigate to `http://localhost:5173` (or the specified port).
+3. Create an account using unique username and strong password and then login.
+4. Use the web application to perform CRUD operations and visualize data flow.
 
