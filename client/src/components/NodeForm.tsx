@@ -1,59 +1,66 @@
-import { useRef } from "react"
 import { authInstance } from "../config/axios";
-import { useReactFlow } from "reactflow";
+import { Node, useReactFlow } from "reactflow";
+import {useForm} from 'react-hook-form'
+import { DataToUpdate, NodeData} from "../types/NodeType";
+import { useEffect } from "react";
 
-export default function NodeForm(){
+export default function NodeForm({data: nodeData}: {data?: Node}){
 
-    const formRef = useRef(null)
     const {setNodes} = useReactFlow()
 
-      //Add node to database
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+    const { handleSubmit, register, reset, setValue, formState: {isSubmitting} } = useForm({
+      defaultValues: {
+        title: '',
+        description: '',
+        type: 'simple'
+      }
+    })
 
+    useEffect(() => {
+      if(!nodeData?.id) return
+      setValue('title', nodeData?.data.label)
+      setValue('description', nodeData?.data.description)
+      setValue('type', nodeData?.type || 'simple')
+
+    }, [nodeData])
+
+
+  //Add node to database
+  async function onSubmit(data: NodeData) {
+
+
+    if(data.title.trim() === '') return
     try {
-      const formData = new FormData(e.currentTarget);
-      const title = formData.get("title") as string;
-      const description = formData.get("description") as string;
-      const type = formData.get("type") as string;
-      // const formObject = Object.fromEntries(formData.entries())
-
-      // console.log('formbojeg ', formObject)
-      if (!title?.trim()) return;
-
-      type DataToUpdate = {
-        type: string;
-        position: { x: number; y: number };
-        data: { label: string; description?: string }; // Make description optional
-      };
 
       const dataToUpdate: DataToUpdate = {
-        type: type || "simple",
+        type: data.type || "simple",
         position: { x: 200, y: 200 },
-        data: { label: title },
+        data: { label: data.title },
       };
 
-      if (description && description.trim() !== "") {
-        dataToUpdate.data.description = description.trim();
+      if (!data.description || data.description.trim() !== "") {
+        dataToUpdate.data.description = data.description.trim();
       }
 
+      if(nodeData?.id){
+        dataToUpdate.id = nodeData?.id
+      }
 
-      const res = await authInstance.post("/add-node", dataToUpdate);
-      // console.log("data -> ", res.data);
-      const data = res.data
-      if (!data.success) {
-        alert(data.message || "something went wrong");
+      // return
+
+      const response = await authInstance.post( nodeData?.id ? "/update-single-node" : "/add-node", dataToUpdate);
+      const result = response.data
+      if (!result.success) {
+        alert(result.message || "something went wrong");
         return;
       }
 
-      if (data.success) {
-        setNodes((prev) => [...prev, data.data]);
+      if (result.success) {
+        setNodes((prev) => [...prev, result.data]);
+        reset();
+        (document.getElementById(nodeData?.id || "my_modal_2") as HTMLDialogElement)?.close();
+        return;
       }
-      if (formRef.current) {
-        (formRef?.current as HTMLFormElement)?.reset();
-      }
-      (document.getElementById("my_modal_2") as HTMLDialogElement)?.close();
-      return;
     } catch (error) {
       console.log("something went wrong!");
       alert("something went wrong!");
@@ -64,32 +71,29 @@ export default function NodeForm(){
 
     return(
         <form
-        ref={formRef}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
         <input
-          type="text"
-          name="title"
+          {...register('title')}
           className="input input-bordered"
           placeholder="Title*"
+          required
         />
         <input
-          type="text"
-          name="description"
+        {...register('description')}
           className="input input-bordered"
           placeholder="Description"
         />
 
-        <select className="select select-bordered w-full " name="type">
-          {/* <option disabled>Choose type</option> */}
+        <select {...register('type')} className="select select-bordered w-full " >
           <option value="simple">Simple node</option>
           <option value="email">Email</option>
           <option value="lead">Lead</option>
           <option value="delay">Wait</option>
         </select>
 
-        <button className="btn">Add</button>
+        <button disabled={isSubmitting} type="submit" className="btn">{ nodeData?.id ? "Update" : "Add"}</button>
       </form>
     )
 }

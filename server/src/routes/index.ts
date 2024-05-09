@@ -1,4 +1,4 @@
-import { updateNode, getNodes, addNode, deleteNode } from "@/controllers/reactflowNode";
+import { updateNode, getNodes, addNode, deleteNode, updateSingleNode } from "@/controllers/reactflowNode";
 import { getEdges, updateEdge } from "@/controllers/reactflowEdge";
 import { Router } from "express";
 import { login, register } from "@/controllers/auth.controller";
@@ -11,11 +11,13 @@ const router = Router()
 //Reactflow Node routes
 router.post('/update-node', checkAuth, updateNode)
 
+router.post('/update-single-node',checkAuth, updateSingleNode)
+
 router.post('/add-node', checkAuth, addNode )
 
 router.get('/nodes', checkAuth, getNodes)
 
-router.delete('/delete-node/:id', deleteNode)
+router.delete('/delete-node/:id',checkAuth, deleteNode)
 
 
 

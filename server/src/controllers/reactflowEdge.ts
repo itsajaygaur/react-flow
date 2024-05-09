@@ -25,9 +25,9 @@ export async function updateEdge(req, res){
               });
               const result = await Edge.collection.bulkWrite?.(bulkOps)
 
-            if(!result) return res.status(401).json({success: false, message: 'Failed to add data!'})
+            if(!result) return res.status(500).json({success: false, message: 'Failed to add data!'})
 
-        return res.json({success: true})
+        return res.status(200).json({success: true})
 
     } catch (error) {
         console.log('something went wrong', error)

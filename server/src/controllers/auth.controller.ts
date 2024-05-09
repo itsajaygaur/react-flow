@@ -12,13 +12,13 @@ export async function register(req, res){
 
         const result = await User.findOne({username})
 
-        if(result) return res.status(202).json({success: false, message: 'User already exists!'})
+        if(result) return res.status(409).json({success: false, message: 'User already exists!'})
 
         const hashedPassword = bcrypt.hashSync(password, 10)
 
         const createUser = await User.create({username, password: hashedPassword})
 
-        if(!createUser) return res.status(202).json({success: false, message: 'Failed to create user'})
+        if(!createUser) return res.status(500).json({success: false, message: 'Failed to create user'})
 
         return res.status(200).json({success: true, message: 'User created successfully'})
         
@@ -34,15 +34,15 @@ export async function login(req, res){
     try {
         const {username, password} = req.body
 
-        if(!username || !password) return res.status(201).json({success: false, message: 'Provide username and password!'})
+        if(!username || !password) return res.status(400).json({success: false, message: 'Provide username and password!'})
 
         const user = await User.findOne({username})
 
-        if(!user) return res.status(202).json({success: false, message: 'User does not exists!'})
+        if(!user) return res.status(404).json({success: false, message: 'User does not exists!'})
 
         const isValidPassword = bcrypt.compareSync(password, user.password)
             
-        if(!isValidPassword) return res.status(202).json({success: false, message: 'Incorrect password!'})
+        if(!isValidPassword) return res.status(401).json({success: false, message: 'Incorrect password!'})
         
         const token = jwt.sign({id: user.id, username: user.username}, process.env.JWT_SECRET, {expiresIn: '24h'})
 

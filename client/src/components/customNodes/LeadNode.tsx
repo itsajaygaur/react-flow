@@ -1,29 +1,18 @@
-import { NodeType } from "../../types/NodeType"
 import { GoPersonAdd } from "react-icons/go";
-import { Handle, Position } from "reactflow";
-import { MdDeleteOutline } from "react-icons/md";
-import { useReactFlow } from "reactflow";
-import deleteNode from "../../lib/api";
+import { Handle, Node, Position } from "reactflow";
+import NodeAction from "../NodeAction";
 
 
 
-export default function LeadNode(data: NodeType){
+export default function LeadNode(data: Node){
 
-    const {setNodes} = useReactFlow()
-
-    async function handleDelete(){
-
-        const result = await deleteNode(data.id)
-        if(!result) return alert('Something went wrong!')
-        setNodes(prev => prev.filter(node => node.id !== data.id))
-
-    }
 
     return(
-        <div className="p-5 rounded-md shadow-sm border border-gray-300 bg-white relative" >
-            <button onClick={handleDelete} className="btn btn-circle absolute top-1 right-1 min-h-0 size-5  "  >
-                <MdDeleteOutline className="fill-red-500" />
-            </button>
+        <div className="p-5 pt-6 rounded-md shadow-sm border border-gray-300 bg-white relative" >
+           
+
+            <NodeAction data={data}  />
+
            <div className="flex items-center gap-3" >
             <div className="border border-pink-600 bg-pink-100 rounded-sm p-1" >
                 <GoPersonAdd size={18} className="fill-pink-600" />

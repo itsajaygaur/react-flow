@@ -23,7 +23,7 @@ export async function addNode(req, res) {
 
     return res.status(200).json({ success: true, data: modifiedNode });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
@@ -50,6 +50,37 @@ export async function updateNode(req, res) {
   }
 }
 
+//Update single node
+export async function updateSingleNode(req, res){
+  try {
+    const data = req.body;
+    
+    if (!data || !data.id)
+      return res
+    .status(400)
+    .json({ success: false, message: "Provide nodes to udpate" });
+    
+    const {id, position, ...dataToUpdate} = data
+
+    console.log('datatoupdate ', dataToUpdate)
+    
+    const result = await Node.findByIdAndUpdate({_id: id, user: req.user.id}, dataToUpdate, {returnDocument: 'after'} ) 
+    
+    if(!result) return res.status(500).json({success: false, message: 'Failed to update the node.'})
+
+      // console.log('resultarup --> ', result)
+
+      const { __v, _id, ...rest } = result._doc; // Destructure __v and _id, keep the rest of the properties
+      const modifiedNode = { id: _id, ...rest }; // Rename _id to id and keep other properties
+
+      return res.status(200).json({success: true, data: modifiedNode})
+
+  } catch (error) {
+    console.log('err' , error)
+    return res.status(500).json({success: false, message: 'Internal server error'})
+  }
+}
+
 //Get all nodes
 export async function getNodes(req, res) {
     try {
@@ -60,7 +91,7 @@ export async function getNodes(req, res) {
     const data = await Node.find({user: id})
     if (!data)
         return res
-    .status(400)
+    .status(500)
     .json({ success: false, message: "Failed to get data" });
     
 
@@ -92,7 +123,7 @@ export async function deleteNode(req, res) {
 
     if (!result)
       return res
-        .status(402)
+        .status(500)
         .json({ success: false, message: "Failed to delete the node" });
 
     const deleteEdge = await Edge.deleteMany({
@@ -101,7 +132,7 @@ export async function deleteNode(req, res) {
 
     if (!deleteEdge)
       res
-        .status(402)
+        .status(500)
         .json({ success: false, message: "Failed to delete its edges" });
 
     res.status(200).json({ success: true });
